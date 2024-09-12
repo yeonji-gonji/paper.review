@@ -1,15 +1,11 @@
-# [Title]
+# [Guide-and-Rescale: Self-Guidance Mechanism for Effective Tuning-Free Real Image Editing]
 ## Quick Look
 
-**Authors**: [Authors]
+**Authors**: [Vadim Titov, Madina Khalmatova, Alexandra Ivanova, Dmitry Vetrov, and Aibek Alanov]
 
-**Date Published** : [Date published or submitted.]
+**Date Published** : [9 Sep 2024]
 
-**Paper Link** : [Personal annotated version of the paper or public online version. ]
-
-**Talk Link**: [Optional talk link e.g. from slideslive if published.]
-
-**Comments:**  [e.g. Published at X / arXiv paper/ in review.]
+**Paper Link** : [https://arxiv.org/abs/2409.01322]
 
 **TLDR:** [One or at most two line summary.] 
 
