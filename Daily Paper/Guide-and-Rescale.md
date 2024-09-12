@@ -21,7 +21,7 @@
 [Summary of the paper - a few sentences with bullet points. What did they do? What is their hypothesis? ]
 
 ## Issues addressed by the paper (Why)
-[What are the issues that the paper addresses? Describe the problem. Why did they write this paper?]
+[diffusion 모델이 발전함에 따라 text-to-image의 결과물도 함께 좋아지고 있지만, 이미지에서 예상되는 변경 사항을 반영하는 것 ( 호랑이 > 늑대 ), 원래 구조와 편집해서는 안 되는 부분을 보존하는 것 사이의 균형을 찾는 것 ( 객체 뒷 잔디 배경 ) 에서 문제가 발생하고 있다. ]
 
 ## Detailed Information (How)
 [ Only for work that appears to be highly related from reading abstract/intro/conclusion.]
