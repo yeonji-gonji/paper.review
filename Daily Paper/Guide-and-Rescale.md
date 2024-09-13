@@ -18,7 +18,7 @@
 **Main Takeaway(s)**: [Main takeaway(s) from the paper. Usually 1 or two sentences max. This usually only makes sense if you have done a detailed read of the paper. I would be mindful of assumptions/soundness of the paper when deciding what the main takeaways are. ]
 
 ## Paper summary (What)
-guidance mechanism을 통해 수정된 diffusion sampling process를 기반으로 하는 새로운 접근 방식을 제안한다. 이미지 편집 영역을 보존하기 위한 layout-preserving energy functions과 노이즈 분포를 보존하기 위한 noise rescaling mechanism을 사용해 빠르고 고품질의 결과를 낼 수 있다. 
+guidance mechanism을 통해 수정된 diffusion sampling process를 기반으로 하는 새로운 접근 방식을 제안한다. 이미지 편집 영역을 보존하기 위한 layout-preserving energy functions과 노이즈 분포를 보존하기 위한 noise rescaling mechanism을 사용해 빠르고 고품질의 결과를 낼 수 있다. </br>
 시간이 많이 소요되는 하이퍼파라미터 조정이나 diffusion 모델의 미세 조정은 이미지 편집에서 이미지의 특성을 유지하기 위해 사용되는데, 이러한 과정을 거치지 않아도 되는 이점이 있다.
 
 ## Issues addressed by the paper (Why)
