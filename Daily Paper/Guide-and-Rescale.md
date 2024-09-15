@@ -7,68 +7,56 @@
 
 **Paper Link** : [https://arxiv.org/abs/2409.01322]
 
-**TLDR:** [One or at most two line summary.] 
+**Tags**: text-to-image / SD / image generation
 
-**Relevance**: [Score between 1 and 5, stating how relevant this paper is to your work. Usually filled in at the end. ]
-
-**Tags**: [General or specific research topic tags e.g. rl, nlp or efficient-nlp. Could also be used to specify the conference this was accepted at or any useful grouping.]
-
-**Soundness**: [Score between 1 and 3 for how sound the results in the paper are. Was their training and/or evaluation settings fair and sound? Did they fairly compare to all relevant work? Similiar to the soundness scores for conference reviews.]
-
-**Main Takeaway(s)**: [Main takeaway(s) from the paper. Usually 1 or two sentences max. This usually only makes sense if you have done a detailed read of the paper. I would be mindful of assumptions/soundness of the paper when deciding what the main takeaways are. ]
+**Main Takeaway(s)**: 제안된 Guide-and-Rescale 방법은 이미지 편집 시 원본 이미지의 구조와 세부사항을 효과적으로 보존하면서 원하는 편집을 수행할 수 있다는 점을 보여준다. 이를 통해 기존 방법들에 비해 빠르고 고품질의 편집 결과를 얻을 수 있다.
 
 ## Paper summary (What)
 guidance mechanism을 통해 수정된 diffusion sampling process를 기반으로 하는 새로운 접근 방식을 제안한다. 이미지 편집 영역을 보존하기 위한 layout-preserving energy functions과 노이즈 분포를 보존하기 위한 noise rescaling mechanism을 사용해 빠르고 고품질의 결과를 낼 수 있다. </br>
 시간이 많이 소요되는 하이퍼파라미터 조정이나 diffusion 모델의 미세 조정은 이미지 편집에서 이미지의 특성을 유지하기 위해 사용되는데, 이러한 과정을 거치지 않아도 되는 이점이 있다.
 
 ## Issues addressed by the paper (Why)
-[diffusion 모델이 발전함에 따라 text-to-image의 결과물도 함께 좋아지고 있지만, 이미지에서 예상되는 변경 사항을 반영하는 것 ( 호랑이 > 늑대 ), 원래 구조와 편집해서는 안 되는 부분을 보존하는 것 사이의 균형을 찾는 것 ( 객체 뒷 잔디 배경 ) 에서 문제가 발생하고 있다. ]
+diffusion 모델이 발전함에 따라 text-to-image의 결과물도 함께 좋아지고 있지만, 이미지에서 예상되는 변경 사항을 반영하는 것, 원래 구조와 편집해서는 안 되는 부분을 보존하는 것 사이의 균형을 찾는 것에서 문제가 발생하고 있다. </br>
+text-to-image model을 기반으로 하는 이미지 편집에 대한 기존 접근법은 3가지로 나눌 수 있다. </br>
+1. 입력 이미지의 구조를 보존하기 위해 입력 이미지의 전체 diffusion 모델과 모든 세부 사항을 보존한다.</br>
+=> 좋은 결과를 내지만, 최적화 프로세스가 너무 길다.</br>
+
+2. 최적화 프로세스를 거치지 않고, diffusion 모델이 이미지 내부에서 표현되는 방식을 사용한다. 모델의 이미지 내부 표현을 사용하고 결과를 생성할 때 변경해서는 안되는 이미지의 일부분을 보존한다. </br>
+=> 최적화 기반 방법 보다 빠르지만, 하이퍼파라미터를 조정해야 한다. </br>
+
+3. diffusion 모델의 전진, 후진 궤적 사이의 불일치하는 부분을 추적한다. </br>
+추가시간이 필요하다. </br>
+
+현재 이미지를 조작하는데 사용할 수 있는 방법들은 시간, 품질, 편집 등의 다양한 측면에서 많은 제한을 가지고 있기 때문에 여전히 효율적이고, 고품질인 이미지를 편집할 수 있는 모델을 찾아내는 것은 어려운 일이다.
 
 ## Detailed Information (How)
-[ Only for work that appears to be highly related from reading abstract/intro/conclusion.]
+UNet은 이미지 편집 과정에서 이미지의 각 층에서 추출하는 다양한 정보인 내부 표현을 캐시해 두고 사용한다. 이렇게 캐시된 내부 표현이 이미지 편집 과정에서 원래 이미지의 실제 특징과 맞지 않을 때가 있다. (=원본 이미지 특징과 편집을 통해 새로 삽입된 특징이 어긋나는 상황) 이 불일치 때문에, 편집된 이미지가 자연스럽지 못하게 된다. 이를 noise trajectory이 자연스러운 이미지 분포에서 벗어난 상황이라고 할 수 있다. </br>
+이러한 문제를 해결하기 위해서, guider라는 에너지 함수들을 사용해 전체적인 구조와 편집되지 말아야 할 이미지의 일부분을 보존하도록 한다. 
 
 ### Problem Setting
-[ What is the problem setting e.g. regression, classification or sequence prediction? In RL, this would also include the environment and details about rewards etc. This should include the evaluation setting for the results. ]
+[Problem] SD 모델을 기반으로 한 이미지 변환, 이미지 편집 : 텍스트로 제시된 목표에 따라 이미지를 자연스럽게 편집해야 한다. </br>
+1. 편집된 이미지의 품질: 편집된 이미지가 주어진 목표(텍스트 설명)에 얼마나 부합하는지 평가한다. ( ex. 빨간 사과 > 초록색 사과 ) </br>
+2. 원본 이미지 보존: 편집된 이미지가 원본 이미지의 구조와 세부사항을 얼마나 잘 보존하는지 평가한다. 편집이 필요한 부분만 수정하고, 나머지 영역은 자연스럽게 유지해야 한다. ( ex.사과를 제외한 뒷 배경 ) </br>
+
+[평가 방식] </br>
+1. LPIPS Score: 편집된 이미지와 원본 이미지의 유사도를 평가하여, 이미지의 원래 구조와 세부사항이 얼마나 잘 보존되었는지를 확인한다.</br>
+2. CLIP Score: 편집된 이미지가 텍스트 목표와 얼마나 잘 부합하는지를 측정한다. </br>
+3. FID Score: 편집된 이미지가 실제 이미지 분포와 얼마나 유사한지를 확인하여, 결과물이 얼마나 자연스러운지 평가한다. </br>
 
 ### Methodology
-[How did they approach the problem. What methods did they use?]
+1. 가이더(Guider) 사용: 이미지 편집 중 원본 이미지의 구조와 변경되어서는 안 되는 지역을 보존하기 위해 특별한 에너지 함수인 "가이더"를 제안한다. 이 가이더는 유넷 내부 표현을 활용하여 이미지 편집 중에도 원본 이미지의 전체적인 구조와 지역적인 디테일을 유지하도록 돕는다. </br>
+2. 노이즈 리스케일링(Noise Rescaling): 편집 과정에서 노이즈의 경로가 자연스러운 이미지 분포를 벗어나는 문제를 해결하기 위해, 노이즈 리스케일링 메커니즘을 제안한다. 이 메커니즘은 분류기-프리 가이던스(classifier-free guidance)와 제안된 가이더의 노름(nom)의 균형을 조정하여 원본 이미지의 세부사항을 보존하면서도 원하는 편집을 구현하도록 한다. 
 
 ### Assumptions
-[What assumptions were made and are these assumptions valid?]
-
-### Prominent Formulas
-[Can be empty]
+DDIM inversion이 원본 이미지를 적절하게 재구성할 수 있다고 가정하고, 이를 기반으로 편집 과정에서 원본 이미지의 특징을 유지한다. 그러나 DDIM inversion은 완전히 안정적이지 않을 수 있으며, inversion 과정에서 일부 이미지 세부사항이 손실될 가능성이 있다. 이러한 문제를 해결하기 위해 논문에서는 가이더(guider)와 노이즈 리스케일링을 도입하였다.  
 
 ### Results
-[Theoretical or empirical results (any main graphs and tables). Also try to possibly mention **why** you or the authors think certain results occurred. ]
-
-### Limitations
-[Did the authors mention any reservations/limitations to their work or methodology? Do you see any limitations of their work?]
-
-### Confusing aspects of the paper
-[Is there anything that is confusing and could need better explanations or references?]
+1. LPIPS 메트릭에서는 EDICT 메트릭을 제외하고 가장 우수한 성능을 보였다.</br>
+2. CLIP 점수에서도 PnP 방식을 제외하고는 가장 우수한 성능을 보였다.</br>
+3. 이미지 편집 실행 시간에서 가장 진보된 EDICT 및 PnP 방법과 비교했을 때, 시간이 가장 적게 걸렸으므로 우리의 방법이 계산적으로 더 효율적이다.</br>
+4. 편집된 이미지와 실제 이미지의 분포 사이의 거리를 정량적으로 평가하기 위해 FID 점수를 계산한다. (=점수가 낮을수록 생성된 이미지가 실제 이미지에 가깝다는 의미) FID 점수에서 가장 성능이 좋은 우리의 방식에 가장 가까운 PnP 방식이 있으나, 몇 배나 시간이 더 걸린다. 
 
 ## Conclusions
 
 ### The author's conclusions
-[What is the author's conclusion? What do they claim about their results?]
-
-### My Conclusion
-[What do you think about the work presented in the article? Did the authors manage to achieve what they set out to achieve?]
-
-### Rating
-[Fine, Good, Great]
-
-## Possible future work / improvements
-[Can you think of ways to improve this paper or ideas for future work?]
-
-## Relation to Own Work
-[If related to own work.]
-
-- What can we learn from their approach:
-- How are we different:
-
-## Extra
-- Cited references to follow up on/related papers/check google scholar for papers citing this paper:
-- Source code/blog/twitter thread/other links:
-
+우리의 방법은 원본 이미지 구조를 보존하고 대상 속성을 편집하는 것 사이에서 최상의 균형을 이룬다. 
